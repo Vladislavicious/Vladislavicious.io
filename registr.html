@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="rus">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Авторизация</title>
+<link rel="stylesheet" href="style.css">
+<script src="basic_classes.js"></script>
+<script src="register.js"></script>
+</head>
+
+<body>
+  <div class="flex-container">
+
+    <div class="auth-container">
+      <input type="text" id="login-input" placeholder="Логин">
+      <input type="password" id="password-input" placeholder="Пароль">
+      <input type="password" id="second-password-input" placeholder="Повторите пароль">
+      <button id="enter" onclick="parseLoginPassword()">Войти</button>
+      <p><a href="#" onclick="showSecondPassword()">Зарегистрироваться</a></p>
+    </div>
+
+    <div class="footer">
+      &copy 2024 Шилов
+    </div>
+
+  </div>
+
+</body>
+</html>
