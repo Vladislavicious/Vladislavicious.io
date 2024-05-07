@@ -1,16 +1,46 @@
 const VKID = window.VKIDSDK;
 
-const profileInfo = VKID.Auth.getProfileInfoBySilentToken();
-console.log(profileInfo);
-console.log("\n\n\n\n\nAccess token:");
-console.log(profileInfo["access_token"]);
+class AuthMaker
+{
+  constructor()
+  {
+    if (AuthMaker._instance)
+    {
+      return AuthMaker._instance;
+    }
+    console.log('create AuthMaker');
+    AuthMaker._instance = this;
+    const queryString = window.location.search;
+    console.log("Запрос:\n");
+    console.log(queryString);
+    console.log("\n");
 
-const queryString = window.location.search;
-console.log(queryString);
+    const urlParams = new URLSearchParams(queryString);
+    this.SilentToken = urlParams.get('token');
 
-const urlParams = new URLSearchParams(queryString);
-const token = urlParams.get('token')
-console.log(token);
+    console.log("silent token:\n");
+    console.log(this.SilentToken);
+    console.log("\n");
+
+    this.Uuid = urlParams.get("uuid");
+    console.log("uuid:\n");
+    console.log(this.Uuid);
+    console.log("\n");
+
+  }
+};
+
+let Auth = new AuthMaker();
+
+// const xhr = new XMLHttpRequest();
+// xhr.onreadystatechange = function() {
+// if (this.readyState == 4 && this.status == 200) {
+//   console.log(this.responseText)
+//   }
+// }
+// xhr.open('GET', 'https://yesno.wtf/api', true)
+// xhr.send()
+
 
 function showHideGraph(value) {
   console.log('show', value);
