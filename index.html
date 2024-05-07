@@ -12,27 +12,25 @@
 </head>
 
 <body>
-  <div class="flex-container">
-
-
-    <div class="auth-container">
+    <!-- <div class="auth-container">
       <input type="text" id="login-input" placeholder="Логин">
       <input type="password" id="password-input" placeholder="Пароль">
       <input type="password" id="second-password-input" placeholder="Повторите пароль">
       <button id="enter" onclick="parseLoginPassword()">Войти</button>
       <p><a href="#" onclick="showSecondPassword()">Зарегистрироваться</a></p>
-    </div>
+    </div> -->
 
-    <div id="VkIdSdkOneTap"></div>
-    <div id="authContainer">
-      <button id="authButton" onclick="VKID.Auth.login()">Вк войти</button>
+    <div class="flex-container">
+
+      <div class="auth-container">
+        <button id="authButton" onclick="VKID.Auth.login()">Войти через VK ID</button>
+      </div>
+
     </div>
 
     <div class="footer">
       &copy 2024 Шилов
     </div>
-
-  </div>
 
 </body>
 </html>
