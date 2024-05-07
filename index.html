@@ -1,98 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="rus">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Статистика страниц VK</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="basic_classes.js"></script>
-    <script src="script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Авторизация</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
+<script src="basic_classes.js"></script>
+<script src="register.js"></script>
 </head>
+
 <body>
-
-
   <div class="flex-container">
-    <div class="header">
-        <nav>
-          <ul class="head-ul">
-            <li><a href="#"> &#10047; </a></li><!--
-          --><li><a href="registr.html"> Личный кабинет </a></li>
-          </ul>
-        </nav>
+
+
+    <div class="auth-container">
+      <input type="text" id="login-input" placeholder="Логин">
+      <input type="password" id="password-input" placeholder="Пароль">
+      <input type="password" id="second-password-input" placeholder="Повторите пароль">
+      <button id="enter" onclick="parseLoginPassword()">Войти</button>
+      <p><a href="#" onclick="showSecondPassword()">Зарегистрироваться</a></p>
     </div>
 
-    <div class="search-item">
+    <div id="VkIdSdkOneTap"></div>
 
-      <div class="search-wrap">
-
-        <div class="search">
-          <button type="submit" class="searchButton">
-            <i class="fa fa-search"></i>
-          </button>
-          <input type="text" class="searchTerm" placeholder="Поиск...">
-        </div>
-
-      </div>
+    <div class="footer">
+      &copy 2024 Шилов
+    </div>
 
   </div>
-
-  <div class="flex-container-main">
-
-    <div class="parameter-item">
-      <div class= "select-container">
-        <div class="select">
-          <select onchange="changeParametr(value)">
-            <option selected value="0">Likes</option>
-            <option value="1">Comments</option>
-            <option value="2">Reposts</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div id="graph" class="graph-item">
-      <img src="https://livedune.com/ru/blog/images/tild3634-3164-4365-b034-373465306665__6.jpg"
-          alt="Инфографика" title="Инфографика" class="image image3">
-    </div>
-    <div id="table" class="graph-item">
-      <img src="https://avatars.mds.yandex.net/get-entity_search/98893/259567982/orig"
-          alt="Инфографика" title="Текст" class="image image3">
-    </div>
-    <div id="chart" class="graph-item">
-      <img src="https://poker1.ru/wp-content/uploads/chart.jpg"
-          alt="Инфографика" title="chart" class="image image3">
-    </div>
-
-    <div class="graph-settings-item">
-      <div class="flex-container-graph-settings">
-
-        <div class="date-item">
-          <input type="date" id="watch" name="watch-day"
-                  value="2024-03-26" min="2024-01-01" max="2025-12-31"
-                  onchange="changeDate()" />
-        </div>
-
-        <div class="graph-type-item">
-          <div class= "select-container">
-            <div class="select">
-              <select onchange="showHideGraph(this.value);">
-                <option value="0">Line graph</option>
-                <option value="1" selected>Table</option>
-                <option value="2">Chart</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    &copy 2024 Шилов
-  </div>
-</div>
-
-
 
 </body>
 </html>

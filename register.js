@@ -1,3 +1,26 @@
+const VKID = window.VKIDSDK;
+
+VKID.Config.set({
+  app: 51902989, // Идентификатор приложения.
+  redirectUrl: 'https://vladislavicious.github.io/Vladislavicious.io/main_page.html', // Адрес для перехода после авторизации.
+  state: 'aboba_register' // Произвольная строка состояния приложения.
+});
+
+const oneTap = new VKID.OneTap();
+
+// Получение контейнера из разметки.
+const container = document.getElementById('VkIdSdkOneTap');
+
+// Проверка наличия кнопки в разметке.
+if (container) {
+  console.log('drawing');
+  // Отрисовка кнопки в контейнере с именем приложения APP_NAME, светлой темой и на русском языке.
+  oneTap.render({ container: container, scheme: VKID.Scheme.LIGHT, lang: VKID.Languages.RUS });
+}
+else
+{
+  console.log("cant draw oneTap");
+}
 
 function parseLoginPassword() {
   console.log('parsing');
