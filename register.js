@@ -3,7 +3,6 @@ const VKID = window.VKIDSDK;
 VKID.Config.set({
   app: 51902989, // Идентификатор приложения.
   redirectUrl: 'https://vladislavicious.github.io/Vladislavicious.io/main_page.html', // Адрес для перехода после авторизации.
-  state: 'aboba_register' // Произвольная строка состояния приложения.
 });
 
 const oneTap = new VKID.OneTap();
