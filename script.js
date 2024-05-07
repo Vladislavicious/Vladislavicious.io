@@ -53,8 +53,8 @@ class AuthMaker
       console.log(this.responseText)
       }
     }
-    xhr.open('GET', url)
-    xhr.send()
+    xhr.open('GET', url);
+    xhr.send();
     if( xhr.readyState == 4 && xhr.status == 200 )
     {
       console.log(xhr.responseText);
@@ -68,7 +68,8 @@ class AuthMaker
 };
 
 let Auth = new AuthMaker();
-
+Auth.parseAccessToken();
+console.log(Auth.AccessToken);
 
 
 
