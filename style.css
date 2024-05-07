@@ -50,6 +50,8 @@ h1, h2, h3 {
 .flex-container {
   justify-content: center;
   align-items: center;
+  align-content: center;
+  justify-items: center;
   display: flex;
 
   /* flex-flow: column; */
@@ -376,6 +378,9 @@ ul.head-ul li a:hover{
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-self: center;
+  justify-content: center;
+  justify-items: center;
   gap: 0.1em;
 }
 

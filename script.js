@@ -1,5 +1,10 @@
 // Uses code from basic_classes
+const queryString = window.location.search;
+console.log(queryString);
 
+const urlParams = new URLSearchParams(queryString);
+const token = urlParams.get('token')
+console.log(token);a
 
 function showHideGraph(value) {
   console.log('show', value);
