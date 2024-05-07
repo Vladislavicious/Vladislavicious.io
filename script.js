@@ -1,10 +1,16 @@
-// Uses code from basic_classes
+const VKID = window.VKIDSDK;
+
+const profileInfo = VKID.Auth.getProfileInfoBySilentToken();
+console.log(profileInfo);
+console.log("\n\n\n\n\nAccess token:");
+console.log(profileInfo["access_token"]);
+
 const queryString = window.location.search;
 console.log(queryString);
 
 const urlParams = new URLSearchParams(queryString);
 const token = urlParams.get('token')
-console.log(token);a
+console.log(token);
 
 function showHideGraph(value) {
   console.log('show', value);
