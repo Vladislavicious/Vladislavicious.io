@@ -92,8 +92,8 @@ class RequestMaker
 
   GetFollowersCount(user_id)
   {
-    // let baseAddress = 'https://api.vk.com/method';
-    let baseAddress = 'http://localhost:5500';
+    let baseAddress = 'https://api.vk.com/method';
+    // let baseAddress = 'http://localhost:5500';
     let methodName  = '/users.getFollowers';
     let url = new URL(methodName, baseAddress);
     url.searchParams.set('v', '5.131');
