@@ -75,6 +75,11 @@ class InputItem extends HideableItem {
     super(name);
   }
 
+  GetValue()
+  {
+    return this.GetItem().value;
+  }
+
   Clear()
   {
     this.GetItem().value = "";

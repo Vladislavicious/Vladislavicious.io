@@ -13,27 +13,29 @@ class AuthMaker
     AuthMaker._instance = this;
     const queryString = window.location.search;
 
-    // Извлекаем строку JSON из параметров
-    let jsonParams = decodeURIComponent(queryString.split('payload=')[1]);
+    if( queryString.length > 1 )
+    {
+      // Извлекаем строку JSON из параметров
+      let jsonParams = decodeURIComponent(queryString.split('payload=')[1]);
 
-    // Преобразуем JSON в объект
-    this.paramsObject = JSON.parse(jsonParams);
+      // Преобразуем JSON в объект
+      this.paramsObject = JSON.parse(jsonParams);
 
-    // Выводим полученный объект
-    console.log(this.paramsObject);
+      // Выводим полученный объект
+      console.log(this.paramsObject);
 
-    this.SilentToken = this.paramsObject["token"];
+      this.SilentToken = this.paramsObject["token"];
 
-    console.log("silent token:\n");
-    console.log(this.SilentToken);
-    console.log("\n");
+      console.log("silent token:\n");
+      console.log(this.SilentToken);
+      console.log("\n");
 
-    this.Uuid = this.paramsObject["uuid"];
-    console.log("uuid:\n");
-    console.log(this.Uuid);
-    console.log("\n");
+      this.Uuid = this.paramsObject["uuid"];
+      console.log("uuid:\n");
+      console.log(this.Uuid);
+      console.log("\n");
+    }
 
-    this.AccessToken = NaN;
     this.ServiceToken = "d51dec46d51dec46d51dec46abd60a164bdd51dd51dec46b3012907e548c61bd00ce23e";
   }
 
@@ -56,20 +58,108 @@ class AuthMaker
     if( xhr.readyState == 4 && xhr.status == 200 )
     {
       console.log(xhr.responseText);
+      this.responseText = xhr.responseText;
+      this.AccessToken = xhr.responseText["access_token"];
     }
     else
     {
+      this.AccessToken = "didn't get";
+      this.responseText = null;
       console.log("error GET: ", url);
       console.log("status: ", xhr.status);
     }
   }
 };
 
-let Auth = new AuthMaker();
-Auth.parseAccessToken();
-console.log(Auth.AccessToken);
+// let Auth = new AuthMaker();
+// Auth.parseAccessToken();
+// console.log(Auth.AccessToken);
+
+class RequestMaker
+{
+  constructor()
+  {
+    if (RequestMaker._instance)
+    {
+      return RequestMaker._instance
+    }
+    console.log('create RequestMaker');
+    RequestMaker._instance = this;
+
+    let Auth = new AuthMaker();
+    this.ServiceToken = Auth.ServiceToken;
+  }
+
+  GetFollowersCount(user_id)
+  {
+    // let baseAddress = 'https://api.vk.com/method';
+    let baseAddress = 'http://localhost:5500';
+    let methodName  = '/users.getFollowers';
+    let url = new URL(methodName, baseAddress);
+    url.searchParams.set('v', '5.131');
+    url.searchParams.set('user_id', user_id);
+    url.searchParams.set('access_token', this.ServiceToken);
+    url.searchParams.set('uuid', this.Uuid);
+
+    console.log(url);
+
+    // function reqListener() {
+    //   console.log(this.responseText);
+    // }
+
+    // const req = new XMLHttpRequest();
+    // req.addEventListener("load", reqListener);
+    // req.open("GET", url);
+    // req.send();
+    // url.searchParams.set('v', '5.131');
+    // url.searchParams.set('user_id', user_id);
+    // url.searchParams.set('access_token', this.ServiceToken);
+    // url.searchParams.set('uuid', this.Uuid);
+
+    // console.log(url);
+    const xhr = new XMLHttpRequest();
+    // xhr.setRequestHeader('Origin','http://127.0.0.1:5500');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.log("error GET: ", url);
+                console.log("status: ", xhr.status);
+            }
+        }
+    };
+    xhr.open('GET', url.href, true);
+    xhr.send();
+  }
+}
+
+let req = new RequestMaker();
+req.GetFollowersCount("123456");
+
+// Other functions
+class SearchItem extends InputItem
+{
+  constructor(name)
+  {
+    if (SearchItem._instance)
+    {
+      return SearchItem._instance
+    }
+    console.log('create SearchItem');
+    super(name);
+    SearchItem._instance = this;
+  }
+}
 
 
+function inputEnter(event){
+  let search = new SearchItem("searchInput");
+  if (event.key === "Enter") {
+      console.log(search.GetValue());
+      search.Clear();
+  }
+}
 
 function showHideGraph(value) {
   console.log('show', value);
