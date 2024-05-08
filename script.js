@@ -1,6 +1,5 @@
 const VKID = window.VKIDSDK;
 
-// const que = "?payload=%7B%22type%22%3A%22silent_token%22%2C%22auth%22%3A1%2C%22user%22%3A%7B%22id%22%3A145262192%2C%22first_name%22%3A%22%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D1%81%D0%BB%D0%B0%D0%B2%22%2C%22last_name%22%3A%22%D0%A8.%22%2C%22avatar%22%3A%22https%3A%2F%2Fsun9-33.userapi.com%2Fs%2Fv1%2Fig2%2F0VeBM-_fWoVGhr9OXwS8ePIuMWoC_Beobdx3wuAsz1-U4LxvbEwZYvRgTUsNWC5awZcEM6B3eA0opQqlsHtVWBLz.jpg%3Fsize%3D200x200%26quality%3D95%26crop%3D131%2C470%2C336%2C336%26ava%3D1%22%2C%22avatar_base%22%3Anull%2C%22phone%22%3A%22%2B7%20***%20***%20**%2070%22%7D%2C%22token%22%3A%22ksq0YlIml4yza0Iw7udpdEt6qTP6p8mya8x1Bwpum_Z2ZkkaUrS42eEsQ9CpcN44vgXGoIHCT4qbpvSOMa2v7tRzS4ER-uOPieIqPU9499TZzYj1ffn_Qwj3g1VskVqztF7JeRH_dwUBkDpe5zd8saEzwE7crw2QyI2XMBQ2ANMu8m6HCfQbXnlgCbIHY7px7kly7JPi6-iDw1aLMNSeD8YXKh9I7qV3UggroGb9lP-hcgUQsG2NqrBMpkNP1TNvZVieFP5V8zqT-TGZupMH-jJASoumniRKSNG5lI5qHq03d7sCVhaGU80xu3S4YlTqHtmXzJ7MqN-ZbutfZpVXRo1ratKPYMPcuHBY1zwYF7Vy72ZbRYE2Po2QoZwjN1kd%22%2C%22ttl%22%3A600%2C%22uuid%22%3A%22hwruyt%22%2C%22hash%22%3A%22LaZflhloeCOORwlngy3GQUsVzapaaleKMS5Vnx6r7bH%22%2C%22loadExternalUsers%22%3Afalse%7D";
 
 class AuthMaker
 {
@@ -13,7 +12,6 @@ class AuthMaker
     console.log('create AuthMaker');
     AuthMaker._instance = this;
     const queryString = window.location.search;
-    // const queryString = que;
 
     // Извлекаем строку JSON из параметров
     let jsonParams = decodeURIComponent(queryString.split('payload=')[1]);
@@ -36,7 +34,7 @@ class AuthMaker
     console.log("\n");
 
     this.AccessToken = NaN;
-    this.ServiceToken = 51902989;
+    this.ServiceToken = "d51dec46d51dec46d51dec46abd60a164bdd51dd51dec46b3012907e548c61bd00ce23e";
   }
 
   parseAccessToken()
