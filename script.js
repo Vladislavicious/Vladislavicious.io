@@ -121,6 +121,7 @@ class RequestMaker
 
 function InitializeVk()
 {
+  console.log("initializing");
   VK.init({
     apiId: 51902989,
     onlyWidget: false
