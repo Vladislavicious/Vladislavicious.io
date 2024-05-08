@@ -136,6 +136,7 @@ class RequestMaker
 
 let req = new RequestMaker();
 req.GetFollowersCount("123456");
+req.GetFollowersCount("12345");
 
 // Other functions
 class SearchItem extends InputItem
