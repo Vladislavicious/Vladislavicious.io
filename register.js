@@ -7,7 +7,7 @@ VKID.Config.set({
 
 function handleClick() {
   // Открытие авторизации.
- VKID.Auth.login()
+ VKID.Auth.login();
 }
 
 // Получение кнопки из разметки.

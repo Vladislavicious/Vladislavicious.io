@@ -1,6 +1,3 @@
-const VKID = window.VKIDSDK;
-
-
 class AuthMaker
 {
   constructor()
@@ -143,7 +140,7 @@ class RequestMaker
     //   console.log("response");
     //   console.log(result);
     // }
-    VK.Api.call('users.get', {user_ids: 6492, v:"5.73"}, function(r) {
+    VK.Api.call('users.get', {user_ids: user_id, v:"5.73"}, function(r) {
       if(r.response) {
         console.log(r.response[0]);
         alert('Привет, ' + r.response[0].first_name);
@@ -153,8 +150,8 @@ class RequestMaker
 }
 
 let req = new RequestMaker();
-req.GetFollowersCount("123456");
-req.GetFollowersCount("12345");
+req.GetFollowersCount(123456);
+req.GetFollowersCount(12345);
 
 // Other functions
 class SearchItem extends InputItem

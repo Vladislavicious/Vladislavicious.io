@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Статистика страниц VK</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
     <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
     <script src="basic_classes.js"></script>
     <script src="script.js"></script>
@@ -96,8 +95,17 @@
 
 <script type="text/javascript">
   VK.init({
-    apiId: 51902989
+    apiId: 51902989,
+    onlyWidget: false
   });
+
+  function respFunc(params)
+  {
+    console.log(params);
+  }
+
+  VK.Auth.getLoginStatus(respFunc);
+
 </script>
 
 </body>
