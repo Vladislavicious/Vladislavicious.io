@@ -119,15 +119,24 @@ class RequestMaker
   }
 }
 
-let req = new RequestMaker();
-req.GetFollowersCount(123456);
-req.GetFollowersCount(12345);
+function InitializeVk()
+{
+  VK.init({
+    apiId: 51902989,
+    onlyWidget: false
+  });
+};
 
 function respFunc(params)
 {
   console.log(params);
 }
 VK.Auth.getLoginStatus(respFunc);
+
+let req = new RequestMaker();
+req.GetFollowersCount(123456);
+req.GetFollowersCount(12345);
+
 
 // Other functions
 class SearchItem extends InputItem
@@ -150,6 +159,9 @@ function inputEnter(event){
   if (event.key === "Enter") {
       console.log(search.GetValue());
       search.Clear();
+
+      let req = new RequestMaker();
+      req.GetFollowersCount(123456);
   }
 }
 
