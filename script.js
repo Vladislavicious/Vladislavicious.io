@@ -153,6 +153,13 @@ let req = new RequestMaker();
 req.GetFollowersCount(123456);
 req.GetFollowersCount(12345);
 
+function respFunc(params)
+{
+  console.log(params);
+}
+
+VK.Auth.getLoginStatus(respFunc);
+
 // Other functions
 class SearchItem extends InputItem
 {
