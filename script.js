@@ -93,59 +93,29 @@ class RequestMaker
     this.Uuid         = Auth.Uuid;
   }
 
-  MakeBaseRequest(searchParamsDict)
+  MakeBaseRequest(Method, ParamsDict)
   {
-    let baseAddress = 'https://api.vk.com/method';
-    let methodName  = '/users.getFollowers';
-    let url = new URL(methodName, baseAddress);
-
-    for (const key in searchParamsDict) {
-      if (searchParamsDict.hasOwnProperty(key)) {
-        // Here we can work on properties
-        console.log(`key: ${key}, value: ${searchParamsDict[key]}`)
-        url.searchParams.set(key, searchParamsDict[key]);
+    VK.Api.call(Method, ParamsDict, function(r) {
+      if(r.response) {
+        console.log(r.response[0]);
+        alert('Привет, ', r.response[0].first_name);
       }
-    }
-
-    console.log(url);
-
-    const request = new XMLHttpRequest();
-    request.open("GET", url, false); // `false` makes the request synchronous
-    request.send(null);
-
-    if (request.status === 200) {
-      console.log(request.responseText);
-      return request.responseText;
-    }
-    else
-    {
-      console.log("error: ");
-      console.log(request.status);
-      return null;
-    }
+      else
+      {
+        console.log("\nfailed");
+      }
+    });
 
   }
 
   GetFollowersCount(user_id)
   {
-    // const searchParams = {
-    //   "v" : "5.131",
-    //   "user_id" : user_id,
-    //   "access_token" : this.ServiceToken,
-    //   "uuid" : this.Uuid,
-    // };
-    // let result = this.MakeBaseRequest(searchParams);
-    // if( result != null )
-    // {
-    //   console.log("response");
-    //   console.log(result);
-    // }
-    VK.Api.call('users.get', {user_ids: user_id, v:"5.73"}, function(r) {
-      if(r.response) {
-        console.log(r.response[0]);
-        alert('Привет, ' + r.response[0].first_name);
+      const searchParams = {
+        "v" : "5.73",
+        "user_id" : user_id,
       }
-    });
+      console.log("trying to get", user_id);
+      this.MakeBaseRequest("users.get", searchParams);
   }
 }
 
@@ -157,7 +127,6 @@ function respFunc(params)
 {
   console.log(params);
 }
-
 VK.Auth.getLoginStatus(respFunc);
 
 // Other functions
