@@ -6,6 +6,7 @@
     <title>Статистика страниц VK</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
+    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
     <script src="basic_classes.js"></script>
     <script src="script.js"></script>
 </head>
@@ -93,7 +94,11 @@
   </div>
 </div>
 
-
+<script type="text/javascript">
+  VK.init({
+    apiId: 51902989
+  });
+</script>
 
 </body>
 </html>

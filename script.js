@@ -35,6 +35,11 @@ class AuthMaker
       console.log(this.Uuid);
       console.log("\n");
     }
+    else
+    {
+      console.log("error extracting querystring");
+      this.Uuid = 123456;
+    }
 
     this.ServiceToken = "d51dec46d51dec46d51dec46abd60a164bdd51dd51dec46b3012907e548c61bd00ce23e";
   }
@@ -88,49 +93,62 @@ class RequestMaker
 
     let Auth = new AuthMaker();
     this.ServiceToken = Auth.ServiceToken;
+    this.Uuid         = Auth.Uuid;
+  }
+
+  MakeBaseRequest(searchParamsDict)
+  {
+    let baseAddress = 'https://api.vk.com/method';
+    let methodName  = '/users.getFollowers';
+    let url = new URL(methodName, baseAddress);
+
+    for (const key in searchParamsDict) {
+      if (searchParamsDict.hasOwnProperty(key)) {
+        // Here we can work on properties
+        console.log(`key: ${key}, value: ${searchParamsDict[key]}`)
+        url.searchParams.set(key, searchParamsDict[key]);
+      }
+    }
+
+    console.log(url);
+
+    const request = new XMLHttpRequest();
+    request.open("GET", url, false); // `false` makes the request synchronous
+    request.send(null);
+
+    if (request.status === 200) {
+      console.log(request.responseText);
+      return request.responseText;
+    }
+    else
+    {
+      console.log("error: ");
+      console.log(request.status);
+      return null;
+    }
+
   }
 
   GetFollowersCount(user_id)
   {
-    let baseAddress = 'https://api.vk.com/method';
-    // let baseAddress = 'http://localhost:5500';
-    let methodName  = '/users.getFollowers';
-    let url = new URL(methodName, baseAddress);
-    url.searchParams.set('v', '5.131');
-    url.searchParams.set('user_id', user_id);
-    url.searchParams.set('access_token', this.ServiceToken);
-    url.searchParams.set('uuid', this.Uuid);
-
-    console.log(url);
-
-    // function reqListener() {
-    //   console.log(this.responseText);
+    // const searchParams = {
+    //   "v" : "5.131",
+    //   "user_id" : user_id,
+    //   "access_token" : this.ServiceToken,
+    //   "uuid" : this.Uuid,
+    // };
+    // let result = this.MakeBaseRequest(searchParams);
+    // if( result != null )
+    // {
+    //   console.log("response");
+    //   console.log(result);
     // }
-
-    // const req = new XMLHttpRequest();
-    // req.addEventListener("load", reqListener);
-    // req.open("GET", url);
-    // req.send();
-    // url.searchParams.set('v', '5.131');
-    // url.searchParams.set('user_id', user_id);
-    // url.searchParams.set('access_token', this.ServiceToken);
-    // url.searchParams.set('uuid', this.Uuid);
-
-    // console.log(url);
-    const xhr = new XMLHttpRequest();
-    // xhr.setRequestHeader('Origin','http://127.0.0.1:5500');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                console.log(xhr.responseText);
-            } else {
-                console.log("error GET: ", url);
-                console.log("status: ", xhr.status);
-            }
-        }
-    };
-    xhr.open('GET', url.href, true);
-    xhr.send();
+    VK.Api.call('users.get', {user_ids: 6492, v:"5.73"}, function(r) {
+      if(r.response) {
+        console.log(r.response[0]);
+        alert('Привет, ' + r.response[0].first_name);
+      }
+    });
   }
 }
 
