@@ -1,7 +1,7 @@
 
 class CallbackSynchronizer
 {
-  constructor(MethodName, ParamsDict)
+  constructor()
   {
     if (CallbackSynchronizer._instance)
       {
@@ -45,8 +45,8 @@ class RequestMaker
 
   MakeBaseRequest(Method, ParamsDict)
   {
-    let syncronizer =  new CallbackSynchronizer(Method, ParamsDict);
-    return syncronizer.GetPromise();
+    let syncronizer =  new CallbackSynchronizer();
+    return syncronizer.GetPromise(Method, ParamsDict);
   }
 
   GetFollowersCount(user_id)
