@@ -116,11 +116,25 @@ class RequestMaker
         "user_id" : user_id,
       }
       console.log("trying to get", user_id);
-      result = this.MakeBaseRequest("users.get", searchParams);
+      let result = this.MakeBaseRequest("users.get", searchParams);
       if( result != null )
       {
         console.log(result[0]);
       }
+  }
+
+  GetPhotos(user_id)
+  {
+    const searchParams = {
+      "v" : "5.83",
+      "user_id" : user_id,
+    }
+    console.log("trying to get", user_id);
+    let result = this.MakeBaseRequest("photos.get", searchParams);
+    if( result != null )
+    {
+      console.log(result);
+    }
   }
 }
 
@@ -141,8 +155,12 @@ function InitializeVk()
 };
 
 let req = new RequestMaker();
+
 req.GetFollowersCount(123456);
+req.GetPhotos(123456);
 req.GetFollowersCount(12345);
+req.GetPhotos(12345);
+
 
 // Other functions
 class SearchItem extends InputItem
