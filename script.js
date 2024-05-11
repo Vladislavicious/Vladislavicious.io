@@ -116,14 +116,17 @@ class RequestMaker
         "user_id" : user_id,
         "fields" : "followers_count",
       }
-      console.log("trying to get", user_id);
+      console.log("get followers ", user_id);
       let result = this.MakeBaseRequest("users.get", searchParams);
       if( result != null )
       {
-        console.log("users.get: \n")
-        console.log(result);
         console.log("followers_count\n");
         console.log(result[0]["followers_count"]);
+        console.log(result);
+      }
+      else
+      {
+        console.log("failed");
       }
   }
 
@@ -133,14 +136,38 @@ class RequestMaker
       "v" : "5.83",
       "user_id" : user_id,
     }
-    console.log("trying to get", user_id);
+    console.log("get photos ", user_id);
     let result = this.MakeBaseRequest("photos.get", searchParams);
     if( result != null )
     {
-      console.log("photos.get: \n");
-      console.log(result);
       console.log("photos count: \n");
       console.log(result["count"]);
+      console.log(result);
+    }
+    else
+    {
+      console.log("failed");
+    }
+  }
+
+  GetPosts(user_id)
+  {
+    const searchParams = {
+      "v" : "5.83",
+      "user_id" : user_id,
+      "count" : 100, // Пытаемся получить максимальное число постов
+    }
+    console.log("get posts ", user_id);
+    let result = this.MakeBaseRequest("wall.get", searchParams);
+    if( result != null )
+    {
+      console.log("posts count: \n");
+      console.log(result["count"]);
+      console.log(result);
+    }
+    else
+    {
+      console.log("failed");
     }
   }
 }
@@ -188,20 +215,21 @@ class SearchItem extends InputItem
 function inputEnter(event){
   let search = new SearchItem("searchInput");
   if (event.key === "Enter") {
-      console.log(search.GetValue());
-      search.Clear();
 
-      let req = new RequestMaker();
-      let user_id = parseInt( search.GetValue() );
-      if( user_id == NaN )
+    let req = new RequestMaker();
+    let user_id = parseInt( search.GetValue() );
+    if( user_id == NaN )
       {
         alert("bad id");
         return;
       }
 
+      search.Clear();
+
       let followers = req.GetFollowersCount(user_id);
       let photos = req.GetPhotos(user_id);
-  }
+      let posts = req.GetPosts(user_id);
+    }
 }
 
 function showHideGraph(value) {
