@@ -114,12 +114,16 @@ class RequestMaker
       const searchParams = {
         "v" : "5.83",
         "user_id" : user_id,
+        "fields" : "followers_count",
       }
       console.log("trying to get", user_id);
       let result = this.MakeBaseRequest("users.get", searchParams);
       if( result != null )
       {
-        console.log(result[0]);
+        console.log("users.get: \n")
+        console.log(result);
+        console.log("followers_count\n");
+        console.log(result[0]["followers_count"]);
       }
   }
 
@@ -133,7 +137,10 @@ class RequestMaker
     let result = this.MakeBaseRequest("photos.get", searchParams);
     if( result != null )
     {
+      console.log("photos.get: \n");
       console.log(result);
+      console.log("photos count: \n");
+      console.log(result["count"]);
     }
   }
 }
@@ -185,7 +192,15 @@ function inputEnter(event){
       search.Clear();
 
       let req = new RequestMaker();
-      req.GetFollowersCount(123456);
+      let user_id = parseInt( search.GetValue() );
+      if( user_id == NaN )
+      {
+        alert("bad id");
+        return;
+      }
+
+      let followers = req.GetFollowersCount(user_id);
+      let photos = req.GetPhotos(user_id);
   }
 }
 
