@@ -226,6 +226,7 @@ class RequestMaker
     else
     {
       console.log("\nfailed");
+      return null;
     }
   }
 }
