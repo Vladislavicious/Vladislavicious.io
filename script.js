@@ -77,6 +77,40 @@ class AuthMaker
 // Auth.parseAccessToken();
 // console.log(Auth.AccessToken);
 
+class CallbackSynchronizer
+{
+  constructor(MethodName, ParamsDict)
+  {
+    this.GotResult = false;
+    this.Result = {};
+    this.__MakeBaseRequest(MethodName, ParamsDict);
+  }
+
+  GetResult()
+  {
+    while( true )
+    {
+      if( this.GotResult == true )
+      {
+        return this.Result;
+      }
+    }
+  }
+
+  __MakeBaseRequest(Method, ParamsDict)
+  {
+    VK.Api.call(Method, ParamsDict, function(r) {
+
+      if(r.response)
+      {
+        this.Result = r.response;
+      }
+      this.GotResult = true;
+    });
+  }
+
+};
+
 class RequestMaker
 {
   constructor()
@@ -93,9 +127,10 @@ class RequestMaker
     this.Uuid         = Auth.Uuid;
   }
 
-  MakeBaseRequest(Method, ParamsDict, callback)
+  MakeBaseRequest(Method, ParamsDict)
   {
-    VK.Api.call(Method, ParamsDict, callback);
+    let syncronizer =  new CallbackSynchronizer(Method, ParamsDict);
+    return syncronizer.GetResult();
   }
 
   GetFollowersCount(user_id)
@@ -106,17 +141,18 @@ class RequestMaker
       "fields" : "followers_count",
     }
     // result = { "followers_count" : 0 };
-    this.MakeBaseRequest("users.get", searchParams, function(r) {
-      console.log("get followers ", user_id);
-      if(r.response) {
-        console.log("followers_count ", result[0]["followers_count"]);
-        //result[0]["followers_count"];
-      }
-      else
-      {
-        console.log("\nfailed");
-      }
-    });
+    console.log("get followers ", user_id);
+    let result = this.MakeBaseRequest("users.get", searchParams);
+    if( result ) {
+      console.log("followers_count ", result[0]["followers_count"]);
+      return result;
+    }
+    else
+    {
+      console.log("\nfailed");
+      return null;
+    }
+
   }
 
   GetAlbums(user_id)
@@ -126,18 +162,18 @@ class RequestMaker
       "user_id" : user_id,
     }
 
-    this.MakeBaseRequest("photos.getAlbums", searchParams, function(r) {
-      console.log("get album ", user_id);
-      if(r.response) {
-        console.log("albums count: \n");
-        console.log(result["count"]);
-        // return result["items"];
-      }
-      else
-      {
-        console.log("\nfailed");
-      }
-    });
+    console.log("get album ", user_id);
+    let result = this.MakeBaseRequest("photos.getAlbums", searchParams);
+    if(result) {
+      console.log("albums count: \n");
+      console.log(result["count"]);
+      return result["items"];
+    }
+    else
+    {
+      console.log("\nfailed");
+      return null;
+    }
   }
 
   GetPhotos(user_id)
@@ -158,17 +194,18 @@ class RequestMaker
       "album_id" : albums[0]["id"],
     };
 
-    this.MakeBaseRequest("photos.get", searchParams, function(r) {
-      console.log("get photos ", user_id);
-      if(r.response) {
-        console.log("photos count: \n");
-        console.log(result["count"]);
-      }
-      else
-      {
-        console.log("\nfailed");
-      }
-    });
+    let result = this.MakeBaseRequest("photos.get", searchParams);
+    console.log("get photos ", user_id);
+    if(result) {
+      console.log("photos count: \n");
+      console.log(result["count"]);
+      return result["items"];
+    }
+    else
+    {
+      console.log("\nfailed");
+      return null;
+    }
   }
 
   GetPosts(user_id)
@@ -179,17 +216,17 @@ class RequestMaker
       "count" : 1, // Пытаемся получить максимальное число постов
     }
 
-    this.MakeBaseRequest("wall.get", searchParams, function(r) {
-      console.log("get posts ", user_id);
-      if(r.response) {
-        console.log("all posts count: \n");
-        console.log(result["count"]);
-      }
-      else
-      {
-        console.log("\nfailed");
-      }
-    });
+    let result = this.MakeBaseRequest("wall.get", searchParams);
+    console.log("get posts ", user_id);
+    if(result) {
+      console.log("all posts count: \n");
+      console.log(result["count"]);
+      return result["items"];
+    }
+    else
+    {
+      console.log("\nfailed");
+    }
   }
 }
 
