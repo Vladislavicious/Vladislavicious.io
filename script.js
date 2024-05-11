@@ -98,11 +98,12 @@ class RequestMaker
     VK.Api.call(Method, ParamsDict, function(r) {
       if(r.response) {
         console.log(r.response[0]);
-        alert('Привет, ', r.response[0].first_name);
+        return r.response;
       }
       else
       {
         console.log("\nfailed");
+        return null;
       }
     });
 
@@ -111,12 +112,21 @@ class RequestMaker
   GetFollowersCount(user_id)
   {
       const searchParams = {
-        "v" : "5.73",
+        "v" : "5.83",
         "user_id" : user_id,
       }
       console.log("trying to get", user_id);
-      this.MakeBaseRequest("users.get", searchParams);
+      result = this.MakeBaseRequest("users.get", searchParams);
+      if( result != null )
+      {
+        console.log(result[0]);
+      }
   }
+}
+
+function echoFunc(params)
+{
+  console.log(params);
 }
 
 function InitializeVk()
@@ -126,18 +136,13 @@ function InitializeVk()
     apiId: 51902989,
     onlyWidget: false
   });
-};
 
-function respFunc(params)
-{
-  console.log(params);
-}
-VK.Auth.getLoginStatus(respFunc);
+  VK.Auth.getLoginStatus(echoFunc);
+};
 
 let req = new RequestMaker();
 req.GetFollowersCount(123456);
 req.GetFollowersCount(12345);
-
 
 // Other functions
 class SearchItem extends InputItem
