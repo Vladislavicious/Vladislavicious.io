@@ -93,61 +93,82 @@ class RequestMaker
     this.Uuid         = Auth.Uuid;
   }
 
-  MakeBaseRequest(Method, ParamsDict)
+  MakeBaseRequest(Method, ParamsDict, callback)
   {
-    VK.Api.call(Method, ParamsDict, function(r) {
-      if(r.response) {
-        console.log(r.response[0]);
-        return r.response;
-      }
-      else
-      {
-        console.log("\nfailed");
-        return null;
-      }
-    });
-
+    VK.Api.call(Method, ParamsDict, callback);
   }
 
   GetFollowersCount(user_id)
   {
-      const searchParams = {
-        "v" : "5.83",
-        "user_id" : user_id,
-        "fields" : "followers_count",
-      }
+    const searchParams = {
+      "v" : "5.83",
+      "user_id" : user_id,
+      "fields" : "followers_count",
+    }
+    // result = { "followers_count" : 0 };
+    this.MakeBaseRequest("users.get", searchParams, function(r) {
       console.log("get followers ", user_id);
-      let result = this.MakeBaseRequest("users.get", searchParams);
-      if( result != null )
-      {
-        console.log("followers_count\n");
-        console.log(result[0]["followers_count"]);
-        console.log(result);
+      if(r.response) {
+        console.log("followers_count ", result[0]["followers_count"]);
+        //result[0]["followers_count"];
       }
       else
       {
-        console.log("failed");
+        console.log("\nfailed");
       }
+    });
   }
 
-  GetPhotos(user_id)
+  GetAlbums(user_id)
   {
     const searchParams = {
       "v" : "5.83",
       "user_id" : user_id,
     }
-    console.log("get photos ", user_id);
-    let result = this.MakeBaseRequest("photos.get", searchParams);
-    if( result != null )
+
+    this.MakeBaseRequest("photos.getAlbums", searchParams, function(r) {
+      console.log("get album ", user_id);
+      if(r.response) {
+        console.log("albums count: \n");
+        console.log(result["count"]);
+        // return result["items"];
+      }
+      else
+      {
+        console.log("\nfailed");
+      }
+    });
+  }
+
+  GetPhotos(user_id)
+  {
+    albums = this.GetAlbums(user_id);
+    if( albums == null )
+      return null;
+
+    if( albums.length == 0 )
     {
-      console.log("photos count: \n");
-      console.log(result["count"]);
-      console.log(result);
+      console.log(" zero albums ");
+      return null;
     }
-    else
-    {
-      console.log("failed");
-    }
+
+    const searchParams = {
+      "v" : "5.83",
+      "user_id" : user_id,
+      "album_id" : albums[0]["id"],
+    };
+
+    this.MakeBaseRequest("photos.get", searchParams, function(r) {
+      console.log("get photos ", user_id);
+      if(r.response) {
+        console.log("photos count: \n");
+        console.log(result["count"]);
+      }
+      else
+      {
+        console.log("\nfailed");
+      }
+    });
   }
 
   GetPosts(user_id)
@@ -155,20 +176,20 @@ class RequestMaker
     const searchParams = {
       "v" : "5.83",
       "user_id" : user_id,
-      "count" : 100, // Пытаемся получить максимальное число постов
+      "count" : 1, // Пытаемся получить максимальное число постов
     }
-    console.log("get posts ", user_id);
-    let result = this.MakeBaseRequest("wall.get", searchParams);
-    if( result != null )
-    {
-      console.log("posts count: \n");
-      console.log(result["count"]);
-      console.log(result);
-    }
-    else
-    {
-      console.log("failed");
-    }
+
+    this.MakeBaseRequest("wall.get", searchParams, function(r) {
+      console.log("get posts ", user_id);
+      if(r.response) {
+        console.log("all posts count: \n");
+        console.log(result["count"]);
+      }
+      else
+      {
+        console.log("\nfailed");
+      }
+    });
   }
 }
 
@@ -189,11 +210,6 @@ function InitializeVk()
 };
 
 let req = new RequestMaker();
-
-req.GetFollowersCount(123456);
-req.GetPhotos(123456);
-req.GetFollowersCount(12345);
-req.GetPhotos(12345);
 
 
 // Other functions
@@ -226,9 +242,9 @@ function inputEnter(event){
 
       search.Clear();
 
-      let followers = req.GetFollowersCount(user_id);
-      let photos = req.GetPhotos(user_id);
-      let posts = req.GetPosts(user_id);
+      req.GetFollowersCount(user_id);
+      req.GetPhotos(user_id);
+      req.GetPosts(user_id);
     }
 }
 
