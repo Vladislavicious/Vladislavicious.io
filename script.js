@@ -1,114 +1,34 @@
-class AuthMaker
-{
-  constructor()
-  {
-    if (AuthMaker._instance)
-    {
-      return AuthMaker._instance;
-    }
-    console.log('create AuthMaker');
-    AuthMaker._instance = this;
-    const queryString = window.location.search;
-
-    if( queryString.length > 1 )
-    {
-      // Извлекаем строку JSON из параметров
-      let jsonParams = decodeURIComponent(queryString.split('payload=')[1]);
-
-      // Преобразуем JSON в объект
-      this.paramsObject = JSON.parse(jsonParams);
-
-      // Выводим полученный объект
-      console.log(this.paramsObject);
-
-      this.SilentToken = this.paramsObject["token"];
-
-      console.log("silent token:\n");
-      console.log(this.SilentToken);
-      console.log("\n");
-
-      this.Uuid = this.paramsObject["uuid"];
-      console.log("uuid:\n");
-      console.log(this.Uuid);
-      console.log("\n");
-    }
-    else
-    {
-      console.log("error extracting querystring");
-      this.Uuid = 123456;
-    }
-
-    this.ServiceToken = "d51dec46d51dec46d51dec46abd60a164bdd51dd51dec46b3012907e548c61bd00ce23e";
-  }
-
-  parseAccessToken()
-  {
-    let url = new URL('https://api.vk.com/method/auth.exchangeSilentAuthToken');
-    url.searchParams.set('v', '5.131');
-    url.searchParams.set('token', this.SilentToken);
-    url.searchParams.set('access_token', this.ServiceToken);
-    url.searchParams.set('uuid', this.Uuid);
-
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText)
-      }
-    }
-    xhr.open('GET', url);
-    xhr.send();
-    if( xhr.readyState == 4 && xhr.status == 200 )
-    {
-      console.log(xhr.responseText);
-      this.responseText = xhr.responseText;
-      this.AccessToken = xhr.responseText["access_token"];
-    }
-    else
-    {
-      this.AccessToken = "didn't get";
-      this.responseText = null;
-      console.log("error GET: ", url);
-      console.log("status: ", xhr.status);
-    }
-  }
-};
-
-// let Auth = new AuthMaker();
-// Auth.parseAccessToken();
-// console.log(Auth.AccessToken);
 
 class CallbackSynchronizer
 {
   constructor(MethodName, ParamsDict)
   {
-    this.GotResult = false;
-    this.Result = {};
-    this.__MakeBaseRequest(MethodName, ParamsDict);
-  }
-
-  GetResult()
-  {
-    while( true )
-    {
-      if( this.GotResult == true )
+    if (CallbackSynchronizer._instance)
       {
-        return this.Result;
+        return CallbackSynchronizer._instance
       }
+      console.log('create CallbackSynchronizer');
+      CallbackSynchronizer._instance = this;
+      this.Results = {};
     }
-  }
 
-  __MakeBaseRequest(Method, ParamsDict)
+  GetPromise(Method, ParamsDict)
   {
-    VK.Api.call(Method, ParamsDict, function(r) {
 
-      if(r.response)
-      {
-        this.Result = r.response;
-      }
-      this.GotResult = true;
+    return new Promise((resolve, reject) => {
+
+      VK.Api.call(Method, ParamsDict, (r) => {
+        if( r.response )
+        {
+          resolve(r.response);
+        }
+        else
+          reject(null);
+      });
+
     });
-  }
 
+  }
 };
 
 class RequestMaker
@@ -121,16 +41,12 @@ class RequestMaker
     }
     console.log('create RequestMaker');
     RequestMaker._instance = this;
-
-    let Auth = new AuthMaker();
-    this.ServiceToken = Auth.ServiceToken;
-    this.Uuid         = Auth.Uuid;
   }
 
   MakeBaseRequest(Method, ParamsDict)
   {
     let syncronizer =  new CallbackSynchronizer(Method, ParamsDict);
-    return syncronizer.GetResult();
+    return syncronizer.GetPromise();
   }
 
   GetFollowersCount(user_id)
@@ -142,17 +58,19 @@ class RequestMaker
     }
     // result = { "followers_count" : 0 };
     console.log("get followers ", user_id);
-    let result = this.MakeBaseRequest("users.get", searchParams);
-    if( result ) {
-      console.log("followers_count ", result[0]["followers_count"]);
-      return result;
-    }
-    else
-    {
-      console.log("\nfailed");
-      return null;
-    }
-
+    let promise = this.MakeBaseRequest("users.get", searchParams);
+    promise
+    .then(
+      result => {
+        console.log(result);
+        console.log("followers_count ", result[0]["followers_count"]);
+        return result;
+      },
+      error => {
+        console.log("\nfailed");
+        return error;
+      }
+    );
   }
 
   GetAlbums(user_id)
@@ -280,9 +198,10 @@ function inputEnter(event){
 
       search.Clear();
 
-      req.GetFollowersCount(user_id);
-      req.GetPhotos(user_id);
-      req.GetPosts(user_id);
+      let retVal = req.GetFollowersCount(user_id);
+      console.log("retval: ", retVal);
+      // req.GetPhotos(user_id);
+      // req.GetPosts(user_id);
     }
 }
 
