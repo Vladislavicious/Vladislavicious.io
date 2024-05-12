@@ -19,7 +19,7 @@ class VkPostItem
     let count = 0;
     for( let i = 0; i < this.arrayLength; i++ )
     {
-      count += parseInt(pagePostsArray[i][objectName]["count"], 10);
+      count += parseInt(this.pagePostsArray[i][objectName]["count"], 10);
     }
     return count;
   }
@@ -51,7 +51,7 @@ class VkPostItem
 
   ChangeParams( pagePostsArray, pagePostsCount )
   {
-    this.postArray = pagePostsArray;
+    this.postArray =  pagePostsArray.slice(0);
     this.arrayLength = pagePostsCount;
     this.isSet = true;
   }
@@ -85,8 +85,8 @@ class RequestMaker
     this.MakeBaseRequest("wall.get", searchParams, function(r) {
       console.log("get posts ", user_id);
       if(r.response) {
-        console.log("all posts count: \n");
-        console.log(r.response["count"]);
+        console.log("all posts count:", r.response["count"]);
+        console.log("response: ", r.response);
 
         let post = new VkPostItem();
         post.WaitForParamsArrival();
