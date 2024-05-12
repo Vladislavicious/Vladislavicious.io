@@ -79,7 +79,7 @@ class RequestMaker
     const searchParams = {
       "v" : "5.83",
       "user_id" : user_id,
-      "count" : 1, // Пытаемся получить максимальное число постов
+      "count" : 100,
     }
 
     this.MakeBaseRequest("wall.get", searchParams, function(r) {
@@ -135,15 +135,6 @@ class SearchItem extends InputItem
   }
 }
 
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
-
-
 function inputEnter(event){
   let search = new SearchItem("searchInput");
   if (event.key === "Enter") {
@@ -161,31 +152,19 @@ function inputEnter(event){
       // req.GetPhotos(user_id);
       req.GetPosts(user_id);
 
-      let post = new VkPostItem();
+      let timeout = 500;
+      setTimeout(function() {
+        let post = new VkPostItem();
+        console.log("likes: ", post.GetLikesCount());
+        console.log("reposts: ", post.GetRepostsCount());
+        console.log("comments: ", post.GetCommentsCount());
 
-      let oneWaitTimeMs = 20;
-      let maxWaitTimeMs = 5000;
-      let waitCount = 0;
-      while( !(post.IsPostInfoArrived()) )
-      {
+        let infographics = new Infographics();
+        let parameters = new Parameters();
+        let currentParametr = parameters.GetCurrentVisibleItem();
+        console.log("current parameter: ", currentParametr);
+      }, (timeout));
 
-        if( waitCount * oneWaitTimeMs >= maxWaitTimeMs )
-        {
-          console.log("time expired");
-          break;
-        }
-
-        sleep(oneWaitTimeMs);
-
-        waitCount++;
-      };
-
-      console.log("likes: ", post.GetLikesCount());
-      console.log("reposts: ", post.GetRepostsCount());
-      console.log("comments: ", post.GetCommentsCount());
-
-      let infographics = new Infographics();
-      let currentParametr = infographics.GetCurrentVisibleItem();
     }
 }
 
