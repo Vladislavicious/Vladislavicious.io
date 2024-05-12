@@ -10,6 +10,10 @@ class myArray {
     return p;
   }
 
+  addItem(item){
+    this.items.push(item);
+  }
+
   get allItems(){
     return this.items;
   }
@@ -46,7 +50,7 @@ class Item {
     this.name = name;
   }
 
-  GetItem()
+  getItem()
   {
     return document.getElementById(this.name);
   }
@@ -58,14 +62,14 @@ class HideableItem extends Item {
     super(name);
   }
 
-  Show()
+  show()
   {
-    this.GetItem().style.display = 'block';
+    this.getItem().style.display = 'block';
   }
 
-  Hide()
+  hide()
   {
-    this.GetItem().style.display = 'none';
+    this.getItem().style.display = 'none';
   }
 }
 
@@ -75,13 +79,65 @@ class InputItem extends HideableItem {
     super(name);
   }
 
-  GetValue()
+  getValue()
   {
-    return this.GetItem().value;
+    return this.getItem().value;
   }
 
-  Clear()
+  clear()
   {
-    this.GetItem().value = "";
+    this.getItem().value = "";
+  }
+}
+
+class TableRowItem {
+  constructor(cellStringsArr, cellType)
+  {
+    this.rowItem = document.createElement("tr");
+
+    for( let i = 0; i < cellStringsArr.length; i++ )
+    {
+      let cell = document.createElement(cellType);
+      cell.innerHTML = cellStringsArr[i];
+      this.rowItem.appendChild(cell);
+    }
+  }
+
+  getRow() { return this.rowItem; };
+}
+
+class TableItem extends HideableItem {
+  constructor(name, theadName, tbodyName)
+  {
+    super(name);
+
+    this.tHead = new Item(theadName);
+    this.tBody = new Item(tbodyName);
+  }
+
+  __getTHead() { return this.tHead.getItem(); }
+  __getTBody() { return this.tBody.getItem(); }
+
+  addHeader(ColumnNamesArr)
+  {
+    let columnRow = new TableRowItem(ColumnNamesArr, "th");
+    this.__getTHead().appendChild( columnRow.getRow() );
+  }
+
+  addRow(RowDataArr)
+  {
+    let Row = new TableRowItem(RowDataArr, "td");
+    this.__getTBody().appendChild( Row.getRow() );
+  }
+
+  clear()
+  {
+    this.__getTBody().replaceChildren();
+    this.__getTHead().replaceChildren();
+  }
+
+  show()
+  {
+    this.getItem().style.display = 'flex';
   }
 }

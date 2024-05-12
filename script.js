@@ -13,7 +13,7 @@ class VkPostItem
     this.arrayLength = 0;
   }
 
-  __GetEveryPostsCount(objectName)
+  __getEveryPostsCount(objectName)
   {
     let count = 0;
     for( let i = 0; i < this.arrayLength; i++ )
@@ -23,22 +23,22 @@ class VkPostItem
     return count;
   }
 
-  GetLikesCount()
+  getLikesCount()
   {
-    return this.__GetEveryPostsCount("likes");
+    return this.__getEveryPostsCount("likes");
   }
 
-  GetCommentsCount()
+  getCommentsCount()
   {
-    return this.__GetEveryPostsCount("comments");
+    return this.__getEveryPostsCount("comments");
   }
 
-  GetRepostsCount()
+  getRepostsCount()
   {
-    return this.__GetEveryPostsCount("reposts");
+    return this.__getEveryPostsCount("reposts");
   }
 
-  ChangeParams( pagePostsArray, pagePostsCount )
+  changeParams( pagePostsArray, pagePostsCount )
   {
     this.postArray =  pagePostsArray.slice(0);
     this.arrayLength = pagePostsCount;
@@ -57,12 +57,12 @@ class RequestMaker
     RequestMaker._instance = this;
   }
 
-  MakeBaseRequest(Method, ParamsDict, CallbackFunction)
+  makeBaseRequest(Method, ParamsDict, CallbackFunction)
   {
     VK.Api.call(Method, ParamsDict, CallbackFunction);
   }
 
-  GetPosts(user_id, onGoodResponseFunction)
+  getPosts(user_id, onGoodResponseFunction)
   {
     const searchParams = {
       "v" : "5.83",
@@ -70,7 +70,7 @@ class RequestMaker
       "count" : 100,
     }
 
-    this.MakeBaseRequest("wall.get", searchParams, function(r) {
+    this.makeBaseRequest("wall.get", searchParams, function(r) {
       console.log("get posts ", user_id);
       if(r.response) {
         console.log("all posts count:", r.response["count"]);
@@ -81,7 +81,7 @@ class RequestMaker
         let realPostCount = 100;
         if( r.response["count"] < realPostCount )
           realPostCount = r.response["count"];
-        post.ChangeParams(r.response["items"], realPostCount);
+        post.changeParams(r.response["items"], realPostCount);
         onGoodResponseFunction();
       }
       else
@@ -132,27 +132,31 @@ function inputEnter(event){
   if (event.key === "Enter") {
 
     let req = new RequestMaker();
-    let user_id = parseInt( search.GetValue() );
-    if( user_id == NaN )
+    let user_id = search.getValue();
+    if( user_id.length < 1 || user_id.includes("!@#$%^&*()_+-=[]{}\\|'\";:.,/") )
       {
         alert("bad id");
         return;
       }
 
-      search.Clear();
+      search.clear();
 
-      // req.GetPhotos(user_id);
-      req.GetPosts(user_id, function() {
-        let post = new VkPostItem();
-        console.log("likes: ", post.GetLikesCount());
-        console.log("reposts: ", post.GetRepostsCount());
-        console.log("comments: ", post.GetCommentsCount());
+      let infographics = new Infographics();
+      let table = infographics.getTableItem();
+      table.clear();
+      table.addHeader([ "govno", "zalupa" ]);
+      table.addRow(["dva", "tri"]);
+      // req.getPosts(user_id, function() {
+      //   let post = new VkPostItem();
+      //   console.log("likes: ", post.getLikesCount());
+      //   console.log("reposts: ", post.getRepostsCount());
+      //   console.log("comments: ", post.getCommentsCount());
 
-        let infographics = new Infographics();
-        let parameters = new Parameters();
-        let currentParametr = parameters.GetCurrentVisibleItem();
-        console.log("current parameter: ", currentParametr);
-      });
+      //   let infographics = new Infographics();
+      //   let parameters = new Parameters();
+      //   let currentParametr = parameters.getCurrentVisibleItem();
+      //   console.log("current parameter: ", currentParametr);
+      // });
 
     }
 }
@@ -160,7 +164,7 @@ function inputEnter(event){
 function showHideGraph(value) {
   console.log('show', value);
   let infographics = new Infographics();
-  infographics.ShowItem(value);
+  infographics.showItem(value);
 }
 
 
@@ -173,7 +177,7 @@ function changeParametr(value) {
 function changeDate() {
   console.log('date changed');
   let date = new DateItem('watch');
-  date.PrintDate();
+  date.printDate();
 }
 
 class Infographics {
@@ -186,14 +190,20 @@ class Infographics {
     console.log('create infographics');
     Infographics._instance = this;
     this.items = new myArray(HideableItem);
+
     this.items.newItem('graph');
-    this.items.newItem('table');
+
+    let table = new TableItem('tableContainer', 'theadMainTable', 'tbodyMainTable');
+    this.items.addItem(table);
+
     this.items.newItem('chart');
 
     this.currentVisibleItem = 1;
   }
 
-  ShowItem(value)
+  getTableItem() { return this.items.allItems[1]; }
+
+  showItem(value)
   {
     if( value == this.currentVisibleItem )
       return;
@@ -202,8 +212,8 @@ class Infographics {
       return;
 
     let arr = this.items.allItems;
-    arr[this.currentVisibleItem].Hide();
-    arr[value].Show();
+    arr[this.currentVisibleItem].hide();
+    arr[value].show();
     this.currentVisibleItem = value;
   }
 }
@@ -226,12 +236,12 @@ class Parameters {
     this.currentVisibleItem = 1;
   }
 
-  GetCurrentVisibleItem()
+  getCurrentVisibleItem()
   {
     return this.currentVisibleItem;
   }
 
-  OnChange(value)
+  onChange(value)
   {
     if( value < 0 || value > this.items.length )
       return;
@@ -248,8 +258,8 @@ class DateItem extends Item{
     console.log('create date ', this.name);
   }
 
-  PrintDate()
+  printDate()
   {
-    console.log(this.GetItem().value);
+    console.log(this.getItem().value);
   }
 }

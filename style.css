@@ -373,6 +373,35 @@ ul.head-ul li a:hover{
   display: none;
 }
 
+/*       Table            */
+table {
+  border-collapse: collapse;
+}
+
+#tableContainer {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+TD, TH {
+  border: 0.1em solid var(--darker-back-color);
+  text-align: center;
+}
+
+TH {
+  background: var(--darker-back-color); /* Цвет фона */
+}
+
+thead {
+  flex-grow: 0;
+}
+
+tbody {
+  flex-grow: 1;
+  overflow: auto;
+}
+
 /*       Authorization            */
 .auth-container {
   display: flex;
