@@ -1,3 +1,7 @@
+LIKES_STR = "Лайки"
+COMMENTS_STR = "Комментарии"
+REPOSTS_STS = "Репосты"
+
 class VkPostItem
 {
   constructor()
@@ -134,29 +138,38 @@ function inputEnter(event){
     let req = new RequestMaker();
     let user_id = search.getValue();
     if( user_id.length < 1 || user_id.includes("!@#$%^&*()_+-=[]{}\\|'\";:.,/") )
-      {
-        alert("bad id");
-        return;
-      }
+    {
+      alert("bad id");
+      return;
+    }
 
-      search.clear();
+    search.clear();
 
+    req.getPosts(user_id, function() {
+      let post = new VkPostItem();
       let infographics = new Infographics();
+      let parameters = new Parameters();
+
+      let currentParametrStr = parameters.getCurrentParametrName();
+      let count = 0;
+      if( currentParametrStr == LIKES_STR )
+        count = post.getLikesCount();
+      else if( currentParametrStr == REPOSTS_STR )
+        count = post.getRepostsCount();
+      else if( currentParametrStr == COMMENTS_STR )
+        count = post.getCommentsCount();
+
+      let date = new DateItem();
+
+      let tableHeader = [ "Дата", currentParametrStr  + " Количество" ];
+      let tableRow = [ date.getDate(), count ];
+
       let table = infographics.getTableItem();
       table.clear();
-      table.addHeader([ "govno", "zalupa" ]);
-      table.addRow(["dva", "tri"]);
-      // req.getPosts(user_id, function() {
-      //   let post = new VkPostItem();
-      //   console.log("likes: ", post.getLikesCount());
-      //   console.log("reposts: ", post.getRepostsCount());
-      //   console.log("comments: ", post.getCommentsCount());
 
-      //   let infographics = new Infographics();
-      //   let parameters = new Parameters();
-      //   let currentParametr = parameters.getCurrentVisibleItem();
-      //   console.log("current parameter: ", currentParametr);
-      // });
+      table.addHeader(tableHeader);
+      table.addRow(tableRow);
+    });
 
     }
 }
@@ -176,7 +189,7 @@ function changeParametr(value) {
 
 function changeDate() {
   console.log('date changed');
-  let date = new DateItem('watch');
+  let date = new DateItem();
   date.printDate();
 }
 
@@ -236,6 +249,21 @@ class Parameters {
     this.currentVisibleItem = 1;
   }
 
+  getCurrentParametrName()
+  {
+    switch( this.getCurrentVisibleItem() )
+    {
+      case 0:
+        return LIKES_STR;
+      case 1:
+        return COMMENTS_STR;
+      case 2:
+        return REPOSTS_STR;
+      default:
+        return "Unknown";
+    }
+  }
+
   getCurrentVisibleItem()
   {
     return this.currentVisibleItem;
@@ -252,14 +280,24 @@ class Parameters {
 
 
 class DateItem extends Item{
-  constructor(name)
+  constructor()
   {
-    super(name);
-    console.log('create date ', this.name);
+    if (DateItem._instance)
+    {
+      return DateItem._instance;
+    }
+    console.log('create DateItem');
+    super("watch");
+    DateItem._instance = this;
   }
 
   printDate()
   {
     console.log(this.getItem().value);
+  }
+
+  getDate()
+  {
+    return this.getItem().value;
   }
 }
