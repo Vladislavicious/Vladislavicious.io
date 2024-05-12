@@ -11,7 +11,6 @@ class VkPostItem
 
     this.postArray = [];
     this.arrayLength = 0;
-    this.isSet = false;
   }
 
   __GetEveryPostsCount(objectName)
@@ -19,7 +18,7 @@ class VkPostItem
     let count = 0;
     for( let i = 0; i < this.arrayLength; i++ )
     {
-      count += parseInt(this.pagePostsArray[i][objectName]["count"], 10);
+      count += parseInt(this.postArray[i][objectName]["count"], 10);
     }
     return count;
   }
@@ -39,21 +38,10 @@ class VkPostItem
     return this.__GetEveryPostsCount("reposts");
   }
 
-  IsPostInfoArrived()
-  {
-    return this.isSet;
-  }
-
-  WaitForParamsArrival()
-  {
-    this.isSet = false;
-  }
-
   ChangeParams( pagePostsArray, pagePostsCount )
   {
     this.postArray =  pagePostsArray.slice(0);
     this.arrayLength = pagePostsCount;
-    this.isSet = true;
   }
 }
 
@@ -74,11 +62,11 @@ class RequestMaker
     VK.Api.call(Method, ParamsDict, CallbackFunction);
   }
 
-  GetPosts(user_id)
+  GetPosts(user_id, onGoodResponseFunction)
   {
     const searchParams = {
       "v" : "5.83",
-      "user_id" : user_id,
+      "owner_id" : user_id,
       "count" : 100,
     }
 
@@ -89,8 +77,12 @@ class RequestMaker
         console.log("response: ", r.response);
 
         let post = new VkPostItem();
-        post.WaitForParamsArrival();
-        post.ChangeParams(r.response["items"], r.response["count"]);
+
+        let realPostCount = 100;
+        if( r.response["count"] < realPostCount )
+          realPostCount = r.response["count"];
+        post.ChangeParams(r.response["items"], realPostCount);
+        onGoodResponseFunction();
       }
       else
       {
@@ -150,10 +142,7 @@ function inputEnter(event){
       search.Clear();
 
       // req.GetPhotos(user_id);
-      req.GetPosts(user_id);
-
-      let timeout = 500;
-      setTimeout(function() {
+      req.GetPosts(user_id, function() {
         let post = new VkPostItem();
         console.log("likes: ", post.GetLikesCount());
         console.log("reposts: ", post.GetRepostsCount());
@@ -163,7 +152,7 @@ function inputEnter(event){
         let parameters = new Parameters();
         let currentParametr = parameters.GetCurrentVisibleItem();
         console.log("current parameter: ", currentParametr);
-      }, (timeout));
+      });
 
     }
 }
