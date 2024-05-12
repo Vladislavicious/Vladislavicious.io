@@ -1,35 +1,61 @@
-
-class CallbackSynchronizer
+class VkPostItem
 {
   constructor()
   {
-    if (CallbackSynchronizer._instance)
-      {
-        return CallbackSynchronizer._instance
-      }
-      console.log('create CallbackSynchronizer');
-      CallbackSynchronizer._instance = this;
-      this.Results = {};
+    if (VkPostItem._instance)
+    {
+      return VkPostItem._instance
     }
+    console.log('create VkPostItem');
+    VkPostItem._instance = this;
 
-  GetPromise(Method, ParamsDict)
-  {
-
-    return new Promise((resolve, reject) => {
-
-      VK.Api.call(Method, ParamsDict, (r) => {
-        if( r.response )
-        {
-          resolve(r.response);
-        }
-        else
-          reject(null);
-      });
-
-    });
-
+    this.postArray = [];
+    this.arrayLength = 0;
+    this.isSet = false;
   }
-};
+
+  __GetEveryPostsCount(objectName)
+  {
+    let count = 0;
+    for( let i = 0; i < this.arrayLength; i++ )
+    {
+      count += parseInt(pagePostsArray[i][objectName]["count"], 10);
+    }
+    return count;
+  }
+
+  GetLikesCount()
+  {
+    return this.__GetEveryPostsCount("likes");
+  }
+
+  GetCommentsCount()
+  {
+    return this.__GetEveryPostsCount("comments");
+  }
+
+  GetRepostsCount()
+  {
+    return this.__GetEveryPostsCount("reposts");
+  }
+
+  IsPostInfoArrived()
+  {
+    return this.isSet;
+  }
+
+  WaitForParamsArrival()
+  {
+    this.isSet = false;
+  }
+
+  ChangeParams( pagePostsArray, pagePostsCount )
+  {
+    this.postArray = pagePostsArray;
+    this.arrayLength = pagePostsCount;
+    this.isSet = true;
+  }
+}
 
 class RequestMaker
 {
@@ -43,87 +69,9 @@ class RequestMaker
     RequestMaker._instance = this;
   }
 
-  MakeBaseRequest(Method, ParamsDict)
+  MakeBaseRequest(Method, ParamsDict, CallbackFunction)
   {
-    let syncronizer =  new CallbackSynchronizer();
-    return syncronizer.GetPromise(Method, ParamsDict);
-  }
-
-  GetFollowersCount(user_id)
-  {
-    const searchParams = {
-      "v" : "5.83",
-      "user_id" : user_id,
-      "fields" : "followers_count",
-    }
-    // result = { "followers_count" : 0 };
-    console.log("get followers ", user_id);
-    let promise = this.MakeBaseRequest("users.get", searchParams);
-    promise
-    .then(
-      result => {
-        console.log(result);
-        console.log("followers_count ", result[0]["followers_count"]);
-        return result;
-      },
-      error => {
-        console.log("\nfailed");
-        return error;
-      }
-    );
-  }
-
-  GetAlbums(user_id)
-  {
-    const searchParams = {
-      "v" : "5.83",
-      "user_id" : user_id,
-    }
-
-    console.log("get album ", user_id);
-    let result = this.MakeBaseRequest("photos.getAlbums", searchParams);
-    if(result) {
-      console.log("albums count: \n");
-      console.log(result["count"]);
-      return result["items"];
-    }
-    else
-    {
-      console.log("\nfailed");
-      return null;
-    }
-  }
-
-  GetPhotos(user_id)
-  {
-    albums = this.GetAlbums(user_id);
-    if( albums == null )
-      return null;
-
-    if( albums.length == 0 )
-    {
-      console.log(" zero albums ");
-      return null;
-    }
-
-    const searchParams = {
-      "v" : "5.83",
-      "user_id" : user_id,
-      "album_id" : albums[0]["id"],
-    };
-
-    let result = this.MakeBaseRequest("photos.get", searchParams);
-    console.log("get photos ", user_id);
-    if(result) {
-      console.log("photos count: \n");
-      console.log(result["count"]);
-      return result["items"];
-    }
-    else
-    {
-      console.log("\nfailed");
-      return null;
-    }
+    VK.Api.call(Method, ParamsDict, CallbackFunction);
   }
 
   GetPosts(user_id)
@@ -134,18 +82,21 @@ class RequestMaker
       "count" : 1, // Пытаемся получить максимальное число постов
     }
 
-    let result = this.MakeBaseRequest("wall.get", searchParams);
-    console.log("get posts ", user_id);
-    if(result) {
-      console.log("all posts count: \n");
-      console.log(result["count"]);
-      return result["items"];
-    }
-    else
-    {
-      console.log("\nfailed");
-      return null;
-    }
+    this.MakeBaseRequest("wall.get", searchParams, function(r) {
+      console.log("get posts ", user_id);
+      if(r.response) {
+        console.log("all posts count: \n");
+        console.log(r.response["count"]);
+
+        let post = new VkPostItem();
+        post.ChangeParams(r.response["items"], r.response["count"]);
+      }
+      else
+      {
+        console.log("\nfailed");
+        return null;
+      }
+    });
   }
 }
 
@@ -183,6 +134,10 @@ class SearchItem extends InputItem
   }
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 function inputEnter(event){
   let search = new SearchItem("searchInput");
@@ -198,10 +153,33 @@ function inputEnter(event){
 
       search.Clear();
 
-      let retVal = req.GetFollowersCount(user_id);
-      console.log("retval: ", retVal);
       // req.GetPhotos(user_id);
-      // req.GetPosts(user_id);
+      req.GetPosts(user_id);
+
+      let post = new VkPostItem();
+
+      let oneWaitTimeMs = 20;
+      let maxWaitTimeMs = 5000;
+      let waitCount = 0;
+      while( !(post.IsPostInfoArrived()) )
+      {
+        if( waitCount * oneWaitTimeMs >= maxWaitTimeMs )
+        {
+          console.log("time expired");
+          break;
+        }
+
+        sleep(oneWaitTimeMs).then(() => { return false; });
+
+        waitCount++;
+      };
+
+      console.log("likes: ", post.GetLikesCount());
+      console.log("reposts: ", post.GetRepostsCount());
+      console.log("comments: ", post.GetCommentsCount());
+
+      let infographics = new Infographics();
+      let currentParametr = infographics.GetCurrentVisibleItem();
     }
 }
 
@@ -274,12 +252,17 @@ class Parameters {
     this.currentVisibleItem = 1;
   }
 
+  GetCurrentVisibleItem()
+  {
+    return this.currentVisibleItem;
+  }
+
   OnChange(value)
   {
     if( value < 0 || value > this.items.length )
       return;
 
-    console.log(this.items[value]);
+    this.currentVisibleItem = value;
   }
 }
 
