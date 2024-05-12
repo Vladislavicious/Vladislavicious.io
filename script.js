@@ -89,6 +89,7 @@ class RequestMaker
         console.log(r.response["count"]);
 
         let post = new VkPostItem();
+        post.WaitForParamsArrival();
         post.ChangeParams(r.response["items"], r.response["count"]);
       }
       else
@@ -134,8 +135,12 @@ class SearchItem extends InputItem
   }
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
 }
 
 
@@ -163,13 +168,14 @@ function inputEnter(event){
       let waitCount = 0;
       while( !(post.IsPostInfoArrived()) )
       {
+
         if( waitCount * oneWaitTimeMs >= maxWaitTimeMs )
         {
           console.log("time expired");
           break;
         }
 
-        sleep(oneWaitTimeMs).then(() => { return false; });
+        sleep(oneWaitTimeMs);
 
         waitCount++;
       };
