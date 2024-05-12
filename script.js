@@ -1,6 +1,6 @@
-LIKES_STR = "Лайки"
-COMMENTS_STR = "Комментарии"
-REPOSTS_STS = "Репосты"
+const LIKES_STR = "Лайки"
+const COMMENTS_STR = "Комментарии"
+const REPOSTS_STR = "Репосты"
 
 class VkPostItem
 {
@@ -184,7 +184,7 @@ function showHideGraph(value) {
 function changeParametr(value) {
   console.log('parametr: ', value);
   let parameters = new Parameters();
-  parameters.OnChange(value);
+  parameters.onChange(value);
 }
 
 function changeDate() {
@@ -246,18 +246,18 @@ class Parameters {
     this.items.push('comments');
     this.items.push('reposts');
 
-    this.currentVisibleItem = 1;
+    this.currentVisibleItem = "0";
   }
 
   getCurrentParametrName()
   {
     switch( this.getCurrentVisibleItem() )
     {
-      case 0:
+      case "0":
         return LIKES_STR;
-      case 1:
+      case "1":
         return COMMENTS_STR;
-      case 2:
+      case "2":
         return REPOSTS_STR;
       default:
         return "Unknown";
