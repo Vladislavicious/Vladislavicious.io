@@ -113,8 +113,6 @@ function InitializeVk()
   VK.Auth.getLoginStatus(echoFunc);
 };
 
-let req = new RequestMaker();
-
 
 // Other functions
 class SearchItem extends InputItem
@@ -462,4 +460,12 @@ class ChartItem extends HideableItem {
   {
     this.getItem().style.display = "flex";
   }
+}
+
+
+//////////////////
+function ShowVkAccountInfo()
+{
+  let vkAccount = new VkAccountInfo();
+  console.log("vkAccount: ", vkAccount.getFullName());
 }
