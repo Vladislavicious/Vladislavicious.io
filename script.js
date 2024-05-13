@@ -203,7 +203,7 @@ function inputEnter(event){
       {
         alert("information has not arrieved");
       }
-    }, 1000 );
+    }, 1500 );
 
     req.getPosts(user_id, function() {
       changeInfographicsData( user_id );

@@ -147,6 +147,25 @@ input{
   outline: none;
   border-radius: 0.25em;
 }
+::-webkit-input {
+  color: var(--text-color);
+}
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color: var(--text-color);
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+ color: var(--text-color);
+ opacity: 0.5;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+ color: var(--text-color);
+}
+
+::placeholder { /* Most modern browsers support this now. */
+ color: var(--text-color);
+ opacity: 0.5;
+}
 /*         date input     */
 
 input[type="date"]::-webkit-calendar-picker-indicator{
@@ -322,6 +341,7 @@ ul.head-ul li a:hover{
 
 .searchTerm {
   width: 100%;
+  text-align: center;
   border: var(--search-border-width) solid var(--search-back-color);
   border-left: none;
   padding: (var(--search-height)) / 4;
