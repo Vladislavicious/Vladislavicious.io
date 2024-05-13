@@ -140,42 +140,42 @@ function changeParamsInInfographics()
 
 function changeInfographicsData( user_id )
 {
-  // let infographics = new Infographics();
-  // let parameters = new Parameters();
-
-  // let countName = parameters.getCurrentParametrName();
-  // let count = 0;
-  // if( countName == LIKES_STR )
-  //   count = 25;
-  // else if( countName == REPOSTS_STR )
-  //   count = 452;
-  // else if( countName == COMMENTS_STR )
-  //   count = 11;
-
-  // let date = new DateItem();
-  // let datesArray = [date.getDate(), date.getDate(), date.getDate()];
-  // let countOnDateArray = [count, count * 2, count / 2];
-
-  // infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
-
-  let post = new VkPostItem();
   let infographics = new Infographics();
   let parameters = new Parameters();
 
   let countName = parameters.getCurrentParametrName();
   let count = 0;
   if( countName == LIKES_STR )
-    count = post.getLikesCount();
+    count = 25;
   else if( countName == REPOSTS_STR )
-    count = post.getRepostsCount();
+    count = 452;
   else if( countName == COMMENTS_STR )
-    count = post.getCommentsCount();
+    count = 11;
 
   let date = new DateItem();
-  let datesArray = [date.getDate()];
-  let countOnDateArray = [count];
+  let datesArray = [date.getDate(), date.getDate(), date.getDate()];
+  let countOnDateArray = [count, count * 2, count / 2];
 
   infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
+
+  // let post = new VkPostItem();
+  // let infographics = new Infographics();
+  // let parameters = new Parameters();
+
+  // let countName = parameters.getCurrentParametrName();
+  // let count = 0;
+  // if( countName == LIKES_STR )
+  //   count = post.getLikesCount();
+  // else if( countName == REPOSTS_STR )
+  //   count = post.getRepostsCount();
+  // else if( countName == COMMENTS_STR )
+  //   count = post.getCommentsCount();
+
+  // let date = new DateItem();
+  // let datesArray = [date.getDate()];
+  // let countOnDateArray = [count];
+
+  // infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
 }
 
 function inputEnter(event){
@@ -192,22 +192,22 @@ function inputEnter(event){
 
     search.clear();
 
-
-    // changeInfographicsData( user_id );
-
-
     let infographics = new Infographics();
     infographics.clearPreviousInfo();
-    setTimeout( function() {
-      if( !infographics.isInfoAvailable() )
-      {
-        alert("information has not arrieved");
-      }
-    }, 1500 );
 
-    req.getPosts(user_id, function() {
-      changeInfographicsData( user_id );
-    });
+    changeInfographicsData( user_id );
+
+
+    // setTimeout( function() {
+    //   if( !infographics.isInfoAvailable() )
+    //   {
+    //     alert("information has not arrieved");
+    //   }
+    // }, 1500 );
+
+    // req.getPosts(user_id, function() {
+    //   changeInfographicsData( user_id );
+    // });
 
     }
 }
@@ -242,15 +242,13 @@ class Infographics {
     Infographics._instance = this;
     this.items = new myArray(HideableItem);
 
-    this.items.newItem('graph');
-
     let table = new TableItem('tableContainer', 'theadMainTable', 'tbodyMainTable');
     this.items.addItem(table);
 
     let chart = new ChartItem();
     this.items.addItem(chart);
 
-    this.currentVisibleItem = 1;
+    this.currentVisibleItem = 0;
   }
 
   clearPreviousInfo()
@@ -269,7 +267,7 @@ class Infographics {
     return false;
   }
 
-  __getTableItem() { return this.items.allItems[1]; }
+  __getTableItem() { return this.items.allItems[0]; }
 
   showTable(datesArray, countOnDateArray, countName, idName)
   {
@@ -293,14 +291,10 @@ class Infographics {
 
     if( this.currentVisibleItem == 0 )
     {
-
-    }
-    else if( this.currentVisibleItem == 1 )
-    {
       this.showTable(this.datesArray, this.countOnDateArray,
                      this.countName, this.idName);
     }
-    else if( this.currentVisibleItem == 2 )
+    else if( this.currentVisibleItem == 1 )
     {
       let chart = new ChartItem();
       chart.createGraph(this.datesArray, this.countOnDateArray,
