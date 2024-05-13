@@ -195,8 +195,18 @@ function inputEnter(event){
 
     // changeInfographicsData( user_id );
 
+
+    let infographics = new Infographics();
+    infographics.clearPreviousInfo();
+    setTimeout( function() {
+      if( !infographics.isInfoAvailable() )
+      {
+        alert("information has not arrieved");
+      }
+    }, 1000 );
+
     req.getPosts(user_id, function() {
-      changeParamsOrData();
+      changeInfographicsData( user_id );
     });
 
     }
@@ -241,6 +251,14 @@ class Infographics {
     this.items.addItem(chart);
 
     this.currentVisibleItem = 1;
+  }
+
+  clearPreviousInfo()
+  {
+    this.datesArray = undefined;
+    this.countOnDateArray = undefined;
+    this.countName = undefined;
+    this.idName = undefined;
   }
 
   isInfoAvailable() {

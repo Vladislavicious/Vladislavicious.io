@@ -375,6 +375,7 @@ ul.head-ul li a:hover{
 
 /*       Table            */
 table {
+  color: var(--text-color);
   border-collapse: collapse;
 }
 
