@@ -104,6 +104,9 @@ function echoFunc(params)
 function InitializeVk()
 {
   console.log("initializing");
+
+  let dataSeg = new DateItem();
+
   VK.init({
     apiId: 51902989,
     onlyWidget: false
@@ -387,6 +390,12 @@ class DateItem extends Item{
     console.log('create DateItem');
     super("watch");
     DateItem._instance = this;
+    this.__setTodayDate();
+  }
+
+  __setTodayDate()
+  {
+    this.getItem().valueAsDate = new Date();
   }
 
   printDate()
