@@ -113,6 +113,21 @@ function InitializeVk()
   });
 
   VK.Auth.getLoginStatus(echoFunc);
+
+  let infographics = new Infographics();
+  infographics.clearPreviousInfo();
+
+  setTimeout( function() {
+    if( !infographics.isInfoAvailable() )
+    {
+      alert("information has not arrieved");
+    }
+  }, 1500 );
+
+  let req = new RequestMaker();
+  req.getPosts(user_id, function() {
+    changeInfographicsData( user_id );
+  });
 };
 
 
