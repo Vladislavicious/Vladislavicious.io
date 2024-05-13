@@ -6,6 +6,7 @@
     <title>Статистика страниц VK</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="basic_classes.js"></script>
     <script src="script.js"></script>
 </head>
@@ -72,26 +73,17 @@
       <table id="table">
         <thead id="theadMainTable">
           <tr>
-            <th>Month</th>
-            <th>Savings</th>
+            <th>Дата</th>
+            <th>Количество</th>
           </tr>
         </thead>
         <tbody id="tbodyMainTable">
-          <tr>
-            <td>January</td>
-            <td>$100</td>
-          </tr>
-          <tr>
-            <td>January</td>
-            <td>$100</td>
-          </tr>
         </tbody>
       </table>
     </div>
 
     <div id="chart" class="graph-item">
-      <img src="https://poker1.ru/wp-content/uploads/chart.jpg"
-          alt="Инфографика" title="chart" class="image image3">
+      <canvas id="myChart"></canvas>
     </div>
 
     <div class="graph-settings-item">

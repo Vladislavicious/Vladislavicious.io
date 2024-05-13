@@ -138,6 +138,6 @@ class TableItem extends HideableItem {
 
   show()
   {
-    this.getItem().style.display = 'flex';
+    this.getItem().style.display = "flex";
   }
 }

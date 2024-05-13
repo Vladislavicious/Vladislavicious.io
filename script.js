@@ -209,7 +209,8 @@ class Infographics {
     let table = new TableItem('tableContainer', 'theadMainTable', 'tbodyMainTable');
     this.items.addItem(table);
 
-    this.items.newItem('chart');
+    let chart = new ChartItem();
+    this.items.addItem(chart);
 
     this.currentVisibleItem = 1;
   }
@@ -224,9 +225,12 @@ class Infographics {
     if( value < 0 || value > (this.items.length - 1) )
       return;
 
+
     let arr = this.items.allItems;
     arr[this.currentVisibleItem].hide();
     arr[value].show();
+    if( value == 2 )
+      arr[2].createGraph(["23.05.2024"], [124], "Likes", "uuutc");
     this.currentVisibleItem = value;
   }
 }
@@ -299,5 +303,68 @@ class DateItem extends Item{
   getDate()
   {
     return this.getItem().value;
+  }
+}
+
+function getCssVar(varName)
+{
+  return getComputedStyle(document.documentElement,null).getPropertyValue(varName);
+}
+
+class ChartItem extends HideableItem {
+
+  constructor()
+  {
+    if( ChartItem._instance )
+    {
+      return ChartItem._instance;
+    }
+    console.log("create ChartItem");
+    super("chart");
+    this.chart = new Item("myChart");
+    ChartItem._instance = this;
+
+    let fontColor = getCssVar('--text-color');
+    Chart.defaults.color = fontColor;
+
+  }
+
+  _getContext() { return this.chart.getItem().getContext('2d'); }
+
+  createGraph( datesArray, countOnDateArray, countName, idName )
+  {
+    if( this.graph )
+    {
+      this.graph.destroy();
+    }
+
+    this.graph = new Chart( this._getContext(), {
+      type: 'line',
+      data: {
+        labels: datesArray,
+        datasets: [
+          {
+            label: countName,
+            data: countOnDateArray,
+            backgroundColor: getCssVar("--darker-back-color"),
+            borderColor: getCssVar("--light-color"),
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+            title: {
+                display: true,
+                text: idName,
+            },
+        },
+      },
+    });
+  }
+
+  show()
+  {
+    this.getItem().style.display = "flex";
   }
 }
