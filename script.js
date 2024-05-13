@@ -131,6 +131,53 @@ class SearchItem extends InputItem
   }
 }
 
+function changeParamsInInfographics()
+{
+  let infographics = new Infographics();
+  if( infographics.isInfoAvailable() )
+    changeInfographicsData( null );
+}
+
+function changeInfographicsData( user_id )
+{
+  // let infographics = new Infographics();
+  // let parameters = new Parameters();
+
+  // let countName = parameters.getCurrentParametrName();
+  // let count = 0;
+  // if( countName == LIKES_STR )
+  //   count = 25;
+  // else if( countName == REPOSTS_STR )
+  //   count = 452;
+  // else if( countName == COMMENTS_STR )
+  //   count = 11;
+
+  // let date = new DateItem();
+  // let datesArray = [date.getDate(), date.getDate(), date.getDate()];
+  // let countOnDateArray = [count, count * 2, count / 2];
+
+  // infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
+
+  let post = new VkPostItem();
+  let infographics = new Infographics();
+  let parameters = new Parameters();
+
+  let countName = parameters.getCurrentParametrName();
+  let count = 0;
+  if( countName == LIKES_STR )
+    count = post.getLikesCount();
+  else if( countName == REPOSTS_STR )
+    count = post.getRepostsCount();
+  else if( countName == COMMENTS_STR )
+    count = post.getCommentsCount();
+
+  let date = new DateItem();
+  let datesArray = [date.getDate()];
+  let countOnDateArray = [count];
+
+  infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
+}
+
 function inputEnter(event){
   let search = new SearchItem("searchInput");
   if (event.key === "Enter") {
@@ -145,45 +192,11 @@ function inputEnter(event){
 
     search.clear();
 
-    // let infographics = new Infographics();
-    // let parameters = new Parameters();
 
-    // let countName = parameters.getCurrentParametrName();
-    // let count = 0;
-    // if( countName == LIKES_STR )
-    //   count = 25;
-    // else if( countName == REPOSTS_STR )
-    //   count = 452;
-    // else if( countName == COMMENTS_STR )
-    //   count = 11;
-
-    // let date = new DateItem();
-    // let datesArray = [date.getDate(), date.getDate(), date.getDate()];
-    // let countOnDateArray = [count, count * 2, count / 2];
-
-    // infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
-
+    // changeInfographicsData( user_id );
 
     req.getPosts(user_id, function() {
-      let post = new VkPostItem();
-      let infographics = new Infographics();
-      let parameters = new Parameters();
-
-      let countName = parameters.getCurrentParametrName();
-      let count = 0;
-      if( countName == LIKES_STR )
-        count = post.getLikesCount();
-      else if( countName == REPOSTS_STR )
-        count = post.getRepostsCount();
-      else if( countName == COMMENTS_STR )
-        count = post.getCommentsCount();
-
-      let date = new DateItem();
-      let datesArray = [date.getDate()];
-      let countOnDateArray = [count];
-
-      infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
-
+      changeParamsOrData();
     });
 
     }
@@ -230,13 +243,21 @@ class Infographics {
     this.currentVisibleItem = 1;
   }
 
-  getTableItem() { return this.items.allItems[1]; }
+  isInfoAvailable() {
+    if( this.idName )
+    {
+      return true;
+    }
+    return false;
+  }
 
-  ShowTable(datesArray, countOnDateArray, countName, idName)
+  __getTableItem() { return this.items.allItems[1]; }
+
+  showTable(datesArray, countOnDateArray, countName, idName)
   {
     let tableHeader = [ "Дата", countName ];
 
-    let table = this.getTableItem();
+    let table = this.__getTableItem();
     table.clear();
     table.addHeader(tableHeader);
 
@@ -258,7 +279,7 @@ class Infographics {
     }
     else if( this.currentVisibleItem == 1 )
     {
-      this.ShowTable(this.datesArray, this.countOnDateArray,
+      this.showTable(this.datesArray, this.countOnDateArray,
                      this.countName, this.idName);
     }
     else if( this.currentVisibleItem == 2 )
@@ -274,7 +295,8 @@ class Infographics {
     this.datesArray = datesArray.slice(0);
     this.countOnDateArray = countOnDateArray.slice(0);
     this.countName = countName;
-    this.idName = idName;
+    if( idName != null )
+      this.idName = idName;
 
     this.showInfographics();
   }
@@ -340,6 +362,7 @@ class Parameters {
       return;
 
     this.currentVisibleItem = value;
+    changeParamsInInfographics();
   }
 }
 
