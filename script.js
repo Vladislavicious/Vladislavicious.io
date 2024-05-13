@@ -125,8 +125,8 @@ function InitializeVk()
   }, 1500 );
 
   let req = new RequestMaker();
-  req.getPosts(user_id, function() {
-    changeInfographicsData( user_id );
+  req.getPosts("", function() {
+    changeInfographicsData( "" );
   });
 };
 
