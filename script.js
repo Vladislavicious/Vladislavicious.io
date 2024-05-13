@@ -106,6 +106,7 @@ function InitializeVk()
   console.log("initializing");
 
   let dataSeg = new DateItem();
+  let search = new SearchItem();
 
   VK.init({
     apiId: 51902989,
@@ -276,11 +277,11 @@ class Infographics {
   }
 
   isInfoAvailable() {
-    if( this.idName )
+    if( this.idName === undefined || this.idName === null )
     {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   __getTableItem() { return this.items.allItems[0]; }
