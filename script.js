@@ -145,30 +145,45 @@ function inputEnter(event){
 
     search.clear();
 
+    // let infographics = new Infographics();
+    // let parameters = new Parameters();
+
+    // let countName = parameters.getCurrentParametrName();
+    // let count = 0;
+    // if( countName == LIKES_STR )
+    //   count = 25;
+    // else if( countName == REPOSTS_STR )
+    //   count = 452;
+    // else if( countName == COMMENTS_STR )
+    //   count = 11;
+
+    // let date = new DateItem();
+    // let datesArray = [date.getDate(), date.getDate(), date.getDate()];
+    // let countOnDateArray = [count, count * 2, count / 2];
+
+    // infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
+
+
     req.getPosts(user_id, function() {
       let post = new VkPostItem();
       let infographics = new Infographics();
       let parameters = new Parameters();
 
-      let currentParametrStr = parameters.getCurrentParametrName();
+      let countName = parameters.getCurrentParametrName();
       let count = 0;
-      if( currentParametrStr == LIKES_STR )
+      if( countName == LIKES_STR )
         count = post.getLikesCount();
-      else if( currentParametrStr == REPOSTS_STR )
+      else if( countName == REPOSTS_STR )
         count = post.getRepostsCount();
-      else if( currentParametrStr == COMMENTS_STR )
+      else if( countName == COMMENTS_STR )
         count = post.getCommentsCount();
 
       let date = new DateItem();
+      let datesArray = [date.getDate()];
+      let countOnDateArray = [count];
 
-      let tableHeader = [ "Дата", currentParametrStr  + " Количество" ];
-      let tableRow = [ date.getDate(), count ];
+      infographics.sendInfoForInfographics(datesArray, countOnDateArray, countName, user_id);
 
-      let table = infographics.getTableItem();
-      table.clear();
-
-      table.addHeader(tableHeader);
-      table.addRow(tableRow);
     });
 
     }
@@ -217,6 +232,53 @@ class Infographics {
 
   getTableItem() { return this.items.allItems[1]; }
 
+  ShowTable(datesArray, countOnDateArray, countName, idName)
+  {
+    let tableHeader = [ "Дата", countName ];
+
+    let table = this.getTableItem();
+    table.clear();
+    table.addHeader(tableHeader);
+
+    for( let i = 0; i < datesArray.length; i++ )
+    {
+      let tableRow = [ datesArray[i], countOnDateArray[i] + " шт." ];
+      table.addRow(tableRow);
+    }
+  }
+
+  showInfographics()
+  {
+    if( !this.datesArray )
+      return;
+
+    if( this.currentVisibleItem == 0 )
+    {
+
+    }
+    else if( this.currentVisibleItem == 1 )
+    {
+      this.ShowTable(this.datesArray, this.countOnDateArray,
+                     this.countName, this.idName);
+    }
+    else if( this.currentVisibleItem == 2 )
+    {
+      let chart = new ChartItem();
+      chart.createGraph(this.datesArray, this.countOnDateArray,
+                        this.countName, this.idName);
+    }
+  }
+
+  sendInfoForInfographics(datesArray, countOnDateArray, countName, idName)
+  {
+    this.datesArray = datesArray.slice(0);
+    this.countOnDateArray = countOnDateArray.slice(0);
+    this.countName = countName;
+    this.idName = idName;
+
+    this.showInfographics();
+  }
+
   showItem(value)
   {
     if( value == this.currentVisibleItem )
@@ -229,9 +291,8 @@ class Infographics {
     let arr = this.items.allItems;
     arr[this.currentVisibleItem].hide();
     arr[value].show();
-    if( value == 2 )
-      arr[2].createGraph(["23.05.2024"], [124], "Likes", "uuutc");
     this.currentVisibleItem = value;
+    this.showInfographics();
   }
 }
 
@@ -337,7 +398,6 @@ class ChartItem extends HideableItem {
     {
       this.graph.destroy();
     }
-
     this.graph = new Chart( this._getContext(), {
       type: 'line',
       data: {
@@ -358,7 +418,7 @@ class ChartItem extends HideableItem {
                 display: true,
                 text: idName,
             },
-        },
+          },
       },
     });
   }
