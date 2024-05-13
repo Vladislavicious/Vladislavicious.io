@@ -141,3 +141,31 @@ class TableItem extends HideableItem {
     this.getItem().style.display = "flex";
   }
 }
+
+class TextItem extends Item {
+  constructor(name)
+  {
+    super(name);
+  }
+
+  setValue( value )
+  {
+    this.getItem().innerText = value;
+  }
+
+  getValue() { return this.getItem().innerText; }
+}
+
+class ImageItem extends Item {
+  constructor(name)
+  {
+    super(name);
+  }
+
+  changeImage( newLink )
+  {
+    this.getItem().src = newLink;
+  }
+
+  getImage() { return this.getItem().src; }
+}
