@@ -461,11 +461,3 @@ class ChartItem extends HideableItem {
     this.getItem().style.display = "flex";
   }
 }
-
-
-//////////////////
-function ShowVkAccountInfo()
-{
-  let vkAccount = new VkAccountInfo();
-  console.log("vkAccount: ", vkAccount.getFullName());
-}
