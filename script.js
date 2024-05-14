@@ -135,14 +135,14 @@ function InitializeVk()
 // Other functions
 class SearchItem extends InputItem
 {
-  constructor(name)
+  constructor()
   {
     if (SearchItem._instance)
     {
       return SearchItem._instance
     }
     console.log('create SearchItem');
-    super(name);
+    super("searchInput");
     SearchItem._instance = this;
   }
 }
@@ -196,7 +196,7 @@ function changeInfographicsData( user_id )
 }
 
 function inputEnter(event){
-  let search = new SearchItem("searchInput");
+  let search = new SearchItem();
   if (event.key === "Enter") {
 
     let req = new RequestMaker();
